@@ -1,0 +1,24 @@
+# Version der Docker Compose Syntax
+version: '3.8'
+
+# Definition der Services (Container), aus denen unsere Anwendung besteht
+services:
+  # Der Backend-Service (FastAPI)
+  backend:
+    build: ./backend  # Baut das Image aus dem Dockerfile im 'backend'-Ordner
+    container_name: ki_app_backend
+    env_file:
+      - ./backend/.env  # Lädt Umgebungsvariablen aus der .env-Datei
+    ports:
+      - "8000:8000"  # Mappt den Port 8000 des Containers auf Port 8000 des Host-Systems
+    volumes:
+      - ./backend/app:/code/app # Synchronisiert den Code für Live-Reloading (optional für Entwicklung)
+
+  # Der Frontend-Service (Vue.js)
+  frontend:
+    build: ./frontend # Baut das Image aus dem Dockerfile im 'frontend'-Ordner
+    container_name: ki_app_frontend
+    ports:
+      - "5173:80"  # Mappt Port 80 des Nginx-Containers auf Port 5173 des Host-Systems
+    depends_on:
+      - backend    # Stellt sicher, dass der Backend-Service vor dem Frontend gestartet wird
