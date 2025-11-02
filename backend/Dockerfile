@@ -1,20 +1,19 @@
-# Stage 1: Offizielles Python-Image als Basis
+# Python-Image als Basis nehmen
 FROM python:3.11-slim
 
-# Setzt das Arbeitsverzeichnis im Container
+# Arbeitsverzeichnis setzen
 WORKDIR /code
 
-# Umgebungsvariablen für Python
+# Python-Umgebungsvariablen
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Kopiert die Abhängigkeiten und installiert sie
+# Dependencies installieren
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-# Kopiert den gesamten Anwendungs-Code in das Arbeitsverzeichnis
+# App-Code reinkopieren
 COPY ./app /code/app
 
-# Startet den Server, wenn der Container läuft
-# Der Server ist auf 0.0.0.0 verfügbar, um von außerhalb des Containers erreichbar zu sein
+# Server starten - auf 0.0.0.0, damit man von außen rankommt
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

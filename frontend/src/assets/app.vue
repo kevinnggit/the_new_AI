@@ -4,7 +4,7 @@
     <div class="main-card">
       <header class="app-header">
         <h1>NSPACE AI</h1>
-        <p>Chatte oder lass ein Bild analysieren</p>
+        <p>Probier's aus - chatte mit der KI oder lass ein Bild analysieren</p>
         <div class="view-switcher">
           <button @click="activeView = 'chat'" :class="{ active: activeView === 'chat' }">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
@@ -29,7 +29,7 @@
             </div>
           </div>
           <div class="chat-input-area">
-            <input type="text" v-model="userInput" @keyup.enter="sendMessage" placeholder="Stelle eine Frage..." :disabled="isLoading" />
+            <input type="text" v-model="userInput" @keyup.enter="sendMessage" placeholder="Schreib mir was..." :disabled="isLoading" />
             <button @click="sendMessage" :disabled="isLoading || !userInput">Senden</button>
           </div>
         </div>
@@ -39,7 +39,7 @@
           <div class="image-uploader" @click="triggerFileInput" @dragover.prevent @drop.prevent="handleFileDrop">
             <template v-if="!imagePreviewUrl">
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-2.4-2.4-4.2-4.8-4.8-.9-.3-1.8-.5-2.7-.5-1.5 0-2.8.6-3.9.7-1.2.1-2.5-.4-3.5-1.1C5.6 4.9 4 5.8 3.3 7.5c-.8 2-.2 4.2 1.2 5.6.8.8 1.8 1.3 2.8 1.5l.3.1c.9.2 1.8.4 2.7.7 1.2.4 2.3 1 3.2 1.8.9.8 1.8 1.8 2.5 2.8.5.8 1.3 1.3 2.1 1.5.8.2 1.7.1 2.5-.3z"></path><path d="M7 21a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2Z"></path><path d="M19 21a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2Z"></path></svg>
-              <span>Bild hierher ziehen oder klicken</span>
+              <span>Zieh ein Bild rein oder klick hier</span>
             </template>
             <img v-else :src="imagePreviewUrl" alt="Bildvorschau" class="image-preview" />
             <input type="file" ref="fileInput" @change="handleFileSelect" accept="image/png, image/jpeg" style="display: none;" />
@@ -62,7 +62,7 @@ import { ref, nextTick } from 'vue';
 
 const activeView = ref('chat');
 const chatHistory = ref([
-  { text: 'Hallo! Wie kann ich dir heute helfen?', isUser: false }
+  { text: 'Hey! Was kann ich für dich tun?', isUser: false }
 ]);
 const userInput = ref('');
 const isLoading = ref(false);
@@ -73,9 +73,9 @@ const imagePreviewUrl = ref('');
 const imageDescription = ref('');
 const fileInput = ref(null);
 
-const API_URL = 'http://localhost:8000'; // URL zu unserem Backend
+const API_URL = 'http://localhost:8000'; // Backend-URL
 
-// Funktion, um nach unten zu scrollen
+// Nach unten scrollen, damit man die neuesten Nachrichten sieht
 const scrollToBottom = () => {
   nextTick(() => {
     if (chatWindow.value) {
@@ -84,7 +84,7 @@ const scrollToBottom = () => {
   });
 };
 
-// Funktion zum Senden einer Chat-Nachricht
+// Chat-Nachricht abschicken
 const sendMessage = async () => {
   if (!userInput.value.trim()) return;
 
@@ -115,8 +115,8 @@ const sendMessage = async () => {
     const data = await response.json();
     chatHistory.value.push({ text: data.reply, isUser: false });
   } catch (error) {
-    console.error('Fehler beim Senden der Nachricht:', error);
-    let msg = 'Unbekannter Fehler';
+    console.error('Fehler beim Senden:', error);
+    let msg = 'Irgendwas ist schiefgegangen';
     try {
       if (error && error.message) msg = String(error.message);
     } catch {}
@@ -127,7 +127,7 @@ const sendMessage = async () => {
   }
 };
 
-// --- Bilderkennungs-Funktionen ---
+// Bilderkennung
 const triggerFileInput = () => {
   fileInput.value.click();
 };
@@ -137,7 +137,7 @@ const handleFileSelect = (event) => {
   if (file) {
     selectedImage.value = file;
     imagePreviewUrl.value = URL.createObjectURL(file);
-    imageDescription.value = ''; // Beschreibung zurücksetzen
+    imageDescription.value = ''; // Alte Beschreibung löschen
   }
 };
 
@@ -146,7 +146,7 @@ const handleFileDrop = (event) => {
   if (file && file.type.startsWith('image/')) {
     selectedImage.value = file;
     imagePreviewUrl.value = URL.createObjectURL(file);
-    imageDescription.value = ''; // Beschreibung zurücksetzen
+    imageDescription.value = ''; // Alte Beschreibung löschen
   }
 };
 
@@ -176,7 +176,7 @@ const analyzeImage = async () => {
     imageDescription.value = data.description;
   } catch (error) {
     console.error('Fehler bei der Bildanalyse:', error);
-    let msg = 'Unbekannter Fehler';
+    let msg = 'Irgendwas ist schiefgegangen';
     try {
       if (error && error.message) msg = String(error.message);
     } catch {}
@@ -188,7 +188,7 @@ const analyzeImage = async () => {
 </script>
 
 <style>
-/* Global Styles & Design */
+/* Globale Styles */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
 
 :root {
@@ -299,7 +299,7 @@ body {
   overflow: hidden;
 }
 
-/* Chat View */
+/* Chat-Ansicht */
 .chat-view {
   display: flex;
   flex-direction: column;
@@ -314,7 +314,7 @@ body {
   flex-direction: column;
   gap: 1rem;
 }
-/* Custom Scrollbar */
+/* Eigene Scrollbar */
 .chat-window::-webkit-scrollbar { width: 6px; }
 .chat-window::-webkit-scrollbar-track { background: transparent; }
 .chat-window::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 3px; }
@@ -376,7 +376,7 @@ body {
 .chat-input-area button:hover { transform: scale(1.1); }
 .chat-input-area button:disabled { background: #555; cursor: not-allowed; }
 
-/* Loading Indicator */
+/* Lade-Animation */
 .loading-indicator span {
   display: inline-block;
   width: 8px;
@@ -390,7 +390,7 @@ body {
 .loading-indicator span:nth-child(2) { animation-delay: -0.16s; }
 @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
 
-/* Image View */
+/* Bild-Ansicht */
 .image-view {
   display: flex;
   flex-direction: column;

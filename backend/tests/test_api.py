@@ -1,9 +1,9 @@
 from fastapi.testclient import TestClient
 
-# Import the FastAPI app
+# FastAPI App importieren
 from app.main import app
 
-# Create a TestClient instance
+# Test-Client erstellen
 client = TestClient(app)
 
 
@@ -14,7 +14,7 @@ def test_root():
 
 
 def test_chat_endpoint_monkeypatch(monkeypatch):
-    # Arrange: monkeypatch the service layer to avoid external API calls
+    # Service mocken, damit keine echten API-Calls gemacht werden
     def fake_generate_chat_response(history):
         assert isinstance(history, list)
         return "Hallo! Dies ist eine Testantwort."
@@ -27,10 +27,10 @@ def test_chat_endpoint_monkeypatch(monkeypatch):
         {"isUser": False, "text": "Wie kann ich helfen?"},
     ]
 
-    # Act
+    # Request abfeuern
     resp = client.post("/api/chat", json=payload)
 
-    # Assert
+    # Prüfen, ob alles passt
     assert resp.status_code == 200
     data = resp.json()
     assert "reply" in data
@@ -38,7 +38,7 @@ def test_chat_endpoint_monkeypatch(monkeypatch):
 
 
 def test_recognize_image_endpoint_monkeypatch(monkeypatch, tmp_path):
-    # Arrange: monkeypatch the image description service
+    # Bilderkennungs-Service mocken
     def fake_describe_image(prompt, image_bytes, mime_type):
         assert isinstance(image_bytes, (bytes, bytearray))
         assert mime_type in ("image/png", "image/jpeg")
@@ -47,7 +47,7 @@ def test_recognize_image_endpoint_monkeypatch(monkeypatch, tmp_path):
     import app.services as services
     monkeypatch.setattr(services, "describe_image", fake_describe_image)
 
-    # Create a small dummy PNG file
+    # Kleines Dummy-PNG erstellen
     png_bytes = (
         b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde"
         b"\x00\x00\x00\x0bIDATx\x9cc``\x00\x00\x00\x02\x00\x01\xe2!\xbc3\x00\x00\x00\x00IEND\xaeB`\x82"
@@ -60,10 +60,10 @@ def test_recognize_image_endpoint_monkeypatch(monkeypatch, tmp_path):
         "prompt": "Beschreibe das Bild",
     }
 
-    # Act
+    # Request abschicken
     resp = client.post("/api/recognize-image", files=files, data=data)
 
-    # Assert
+    # Checken, ob's funktioniert hat
     assert resp.status_code == 200
     data = resp.json()
     assert "description" in data

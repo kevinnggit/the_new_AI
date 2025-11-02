@@ -1,28 +1,28 @@
-# Stage 1: Build-Umgebung
-# Verwendet ein Node.js Image, um die Vue-Anwendung zu bauen
+# Stage 1: Build
+# Node.js zum Bauen der Vue-App
 FROM node:18-alpine as build-stage
 
 WORKDIR /app
 
-# Kopiert package.json und package-lock.json und installiert Abhängigkeiten
+# Dependencies installieren
 COPY package*.json ./
 RUN npm install
 
-# Kopiert den restlichen Quellcode
+# Code kopieren
 COPY . .
 
-# Baut die Anwendung für die Produktion
+# Für Production bauen
 RUN npm run build
 
-# Stage 2: Produktions-Umgebung
-# Verwendet einen schlanken Nginx-Server, um die statischen Dateien auszuliefern
+# Stage 2: Production
+# Nginx zum Ausliefern der statischen Dateien
 FROM nginx:stable-alpine as production-stage
 
-# Kopiert die gebauten Dateien aus der Build-Stage
+# Gebaute Dateien aus der Build-Stage holen
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-# Gibt den Port 80 frei, den Nginx standardmäßig verwendet
+# Port 80 freigeben
 EXPOSE 80
 
-# Startet Nginx, wenn der Container läuft
+# Nginx starten
 CMD ["nginx", "-g", "daemon off;"]
