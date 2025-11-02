@@ -1,1 +1,1 @@
-# Diese leere Datei sorgt dafür, dass Python den 'app'-Ordner als Modul erkennt.
+# Sorgt dafür, dass Python den 'app'-Ordner als Modul behandelt.

@@ -1,4 +1,4 @@
-# main.py: Definiert die API-Endpunkte unserer Anwendung.
+# main.py - Hier sind alle API-Endpunkte definiert, die unser Backend anbietet.
 
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,36 +6,35 @@ from typing import List, Dict, Any
 from . import services
 import logging
 
-# Initialisiert die FastAPI-Anwendung
+# Hier erstellen wir unsere FastAPI-Anwendung
 app = FastAPI(
-    title="KI-Anwendung API",
-    description="Backend für die KI-gestützte Chat- und Bilderkennungs-App",
+    title="NSPACE AI API",
+    description="Das Backend für meine kleine Chat- und Bilderkennungs-App",
     version="1.0.0"
 )
 
-# Konfiguriert CORS (Cross-Origin Resource Sharing)
-# Dies ist wichtig, damit unser Frontend (das auf einem anderen Port/einer anderen Domain läuft)
-# mit dem Backend kommunizieren kann.
+# CORS einrichten, damit das Frontend mit dem Backend reden kann
+# (Die laufen ja auf verschiedenen Ports)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Erlaubt Anfragen von allen Origins (für die Entwicklung)
-    allow_credentials=False,  # Keine Credentials mit Wildcard-Origin
-    allow_methods=["*"],  # Erlaubt alle HTTP-Methoden (GET, POST, etc.)
-    allow_headers=["*"],  # Erlaubt alle Header
+    allow_origins=["*"],  # Für die Entwicklung erstmal alle Origins erlauben
+    allow_credentials=False,  # Credentials gehen nicht mit Wildcard
+    allow_methods=["*"],  # Alle Methoden erlauben (GET, POST, usw.)
+    allow_headers=["*"],  # Alle Header durchlassen
 )
 
 
 @app.get("/")
 def read_root():
-    """ Ein einfacher Endpunkt, um zu testen, ob das Backend läuft. """
+    """Simpler Health-Check - damit man sehen kann, ob das Backend überhaupt läuft"""
     return {"status": "Backend is running"}
 
 
 @app.get("/health/details")
 def health_details():
-    """ Liefert einfache Diagnoseinformationen ohne Geheimnisse preiszugeben. """
+    """Gibt ein paar Diagnosedaten zurück, aber ohne Secrets preiszugeben"""
     try:
-        # Prüfen, ob der API-Key im Service geladen ist
+        # Checken, ob der API-Key geladen wurde
         has_api_key = bool(getattr(services, "API_KEY", None))
         return {"ok": True, "has_api_key": has_api_key}
     except Exception as e:
@@ -46,17 +45,15 @@ def health_details():
 @app.post("/api/chat")
 async def chat_endpoint(history: List[Dict[str, Any]]):
     """
-    Endpunkt für die Chat-Funktion.
-    Nimmt den bisherigen Gesprächsverlauf entgegen und gibt die KI-Antwort zurück.
+    Der Chat-Endpunkt - bekommt den bisherigen Verlauf und gibt die Antwort zurück.
     """
     try:
-        # Ruft die Chat-Logik aus dem Service-Modul auf
+        # Service aufrufen, der mit der KI kommuniziert
         response_text = services.generate_chat_response(history)
         return {"reply": response_text}
     except Exception as e:
-        # Loggt die vollständige Ausnahme inkl. Stacktrace, um die Ursache klar zu sehen
+        # Bei Fehler den kompletten Stacktrace loggen, damit man weiß, was schiefging
         logging.exception("Fehler im /api/chat Endpoint: %s", e)
-        # Gibt eine Fehlermeldung zurück, falls etwas schiefgeht
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -66,18 +63,16 @@ async def recognize_image_endpoint(
         image: UploadFile = File(...)
 ):
     """
-    Endpunkt für die Bilderkennung.
-    Nimmt ein Bild und einen Text-Prompt entgegen und gibt die Bildbeschreibung zurück.
+    Bilderkennung - bekommt ein Bild und einen Prompt, gibt Beschreibung zurück.
     """
     try:
-        # Liest die Bilddaten aus dem UploadFile
+        # Bild aus dem Upload auslesen
         image_bytes = await image.read()
 
-        # Ruft die Bilderkennungs-Logik aus dem Service-Modul auf
+        # Ab zur Bilderkennung in den Service
         description = services.describe_image(prompt, image_bytes, image.content_type)
         return {"description": description}
     except Exception as e:
-        # Loggt die vollständige Ausnahme inkl. Stacktrace
+        # Fehler loggen mit Stacktrace
         logging.exception("Fehler im /api/recognize-image Endpoint: %s", e)
-        # Gibt eine Fehlermeldung zurück, falls etwas schiefgeht
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,1 +1,1 @@
-# Markiert den Ordner als Python-Paket, damit relative Importe zuverlässig funktionieren.
+# Macht aus dem Ordner ein Python-Paket - damit die Imports klappen.

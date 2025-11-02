@@ -1,0 +1,86 @@
+# Was mir noch fehlt und was ich verbessern will
+
+Okay, das Projekt läuft soweit, aber es gibt noch einiges zu tun. Hier meine mentale Liste:
+
+## Sicherheit & Production-Readiness
+
+- **CORS richtig konfigurieren**: Momentan ist `allow_origins=["*"]` gesetzt - das ist für die Entwicklung okay, aber in Production sollte ich da die echte Frontend-URL reinschreiben
+- **API-Key Security**: Der API-Key liegt in der .env - das ist schon mal gut. Aber ich sollte sicherstellen, dass die .env nie ins Git-Repo kommt
+- **HTTPS**: Wenn das mal live geht, brauche ich auf jeden Fall SSL/TLS
+- **Rate Limiting**: Wäre nicht schlecht, ein paar Limits einzubauen, damit nicht jemand die API zuspammt
+- **Input Validation**: Sollte die User-Inputs besser validieren, bevor ich sie an die Gemini API schicke
+- **Error Handling**: Die Fehlerbehandlung könnte besser sein - momentan gebe ich manchmal zu viel Info raus
+
+## Features die noch fehlen
+
+- **Markdown-Support im Chat**: Wäre cool, wenn die KI-Antworten mit Markdown formatiert werden könnten
+- **Code-Highlighting**: Falls die KI Code zurückgibt, sollte der schön formatiert sein
+- **Chat-Verlauf speichern**: Momentan ist alles nur im Memory - beim Reload ist alles weg. LocalStorage wäre ein Start, eine richtige DB wäre besser
+- **Mehrere Chat-Sessions**: Wäre nice, wenn man mehrere Chats parallel haben könnte
+- **Bild-Upload History**: Bei der Bilderkennung könnte man auch eine History haben
+- **Dark/Light Mode Toggle**: Ist aktuell nur Dark Mode
+- **Responsive Design**: Funktioniert auf Mobile vermutlich nicht so gut
+- **Typing Indicator**: Ein richtiger Typing-Indikator statt nur den drei Punkten
+- **Copy-to-Clipboard**: Für AI-Antworten wäre ein Copy-Button praktisch
+- **Export Chat**: Chat als Text oder PDF exportieren können
+
+## Code Quality & Wartbarkeit
+
+- **Logging**: Das Backend braucht besseres Logging - momentan logge ich nur Fehler
+- **Monitoring**: Wäre gut zu wissen, wie oft die API aufgerufen wird, wie lange Requests dauern, etc.
+- **Testing**: Die Tests sind minimal - da fehlt noch einiges:
+  - Frontend-Tests (momentan gar keine)
+  - Integration Tests
+  - E2E Tests wären auch nicht schlecht
+- **CI/CD Pipeline**: GitHub Actions oder sowas, damit Tests automatisch laufen
+- **Docs**: Die API braucht bessere Dokumentation (FastAPI macht zwar schon was mit Swagger, aber das könnte ausführlicher sein)
+- **Type Hints**: Im Python-Code sind die Type Hints okay, aber könnten noch konsequenter sein
+- **Comments**: Hab jetzt die Comments menschlicher gemacht, aber manche Code-Teile könnten noch mehr Erklärung vertragen
+
+## Performance
+
+- **Caching**: Für identische Anfragen könnte man cachen
+- **Image Optimization**: Bilder vor dem Upload komprimieren
+- **Lazy Loading**: Beim Chat-Verlauf, wenn der sehr lang wird
+- **Debouncing**: Beim Tippen könnte man debouncing einbauen (falls ich mal Auto-Complete oder sowas mache)
+
+## UX Verbesserungen
+
+- **Loading States**: Bessere Feedback wenn was lädt
+- **Animations**: Ein paar subtile Animationen wären nice
+- **Keyboard Shortcuts**: z.B. Strg+Enter zum Senden
+- **Auto-Scroll**: Funktioniert, könnte aber smoother sein
+- **File Drag & Drop Feedback**: Besseres visuelles Feedback beim Drag & Drop
+- **Error Messages**: User-freundlichere Fehlermeldungen
+- **Toasts/Notifications**: Für Success/Error Messages
+
+## Deployment
+
+- **Docker Compose Production Config**: Momentan ist das Setup mehr für Development
+- **Environment-based Config**: Verschiedene Configs für Dev/Staging/Prod
+- **Health Checks**: Ordentliche Health-Check Endpoints für Container Orchestration
+- **Backup Strategy**: Falls ich mal ne DB habe
+- **Monitoring & Alerts**: Wenn was schiefgeht, will ich das wissen
+
+## Features für später (Nice-to-Have)
+
+- **Multi-Language Support**: Momentan alles auf Deutsch
+- **Voice Input**: Wäre krass, aber vermutlich overkill
+- **PDF Upload**: Nicht nur Bilder, sondern auch PDFs analysieren
+- **User Accounts**: Wenn mehrere Leute das nutzen sollen
+- **API Key Management**: Falls mehrere User verschiedene API-Keys haben
+- **Custom Prompts**: User könnten eigene System-Prompts definieren
+- **Model Selection**: Zwischen verschiedenen Gemini-Modellen wählen können
+- **Streaming Responses**: Die Antwort kommt Wort für Wort rein, nicht alles auf einmal
+- **File Upload für Chat**: Man könnte Files hochladen und darüber reden
+
+## Bekannte Bugs/Issues
+
+- Wenn das Bild zu groß ist, dauert der Upload ewig - da fehlt Feedback
+- Bei sehr langen Chat-Verläufen wird's langsam
+- Error-Handling bei Netzwerkproblemen könnte besser sein
+- Mobile-Layout ist suboptimal
+
+---
+
+Das ist erstmal die Liste. Manche Sachen sind Quick Wins, andere sind größere Projekte. Ich fang mal mit den wichtigsten an (Sicherheit & Production-Readiness).
