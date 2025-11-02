@@ -1,3 +1,4 @@
+
 # services.py - Hier ist die ganze Logik für die Kommunikation mit der Gemini API.
 
 import os
