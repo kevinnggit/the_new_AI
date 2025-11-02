@@ -1,3 +1,4 @@
+
 # main.py - Hier sind alle API-Endpunkte definiert, die unser Backend anbietet.
 
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
