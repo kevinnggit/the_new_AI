@@ -1,3 +1,4 @@
+
 # Python-Image als Basis nehmen
 FROM python:3.11-slim
 

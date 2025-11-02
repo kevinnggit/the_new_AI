@@ -21,3 +21,5 @@ services:
       - "5173:80"  # Nginx Port 80 wird zu 5173
     depends_on:
       - backend  # Backend erst starten
+
+

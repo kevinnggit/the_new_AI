@@ -1,3 +1,5 @@
+
+
 # Stage 1: Build
 # Node.js zum Bauen der Vue-App
 FROM node:18-alpine as build-stage
